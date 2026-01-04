@@ -12,7 +12,7 @@ import java.lang.annotation.*;
 )
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface PasswordAnnValid { // @PasswordAnnValid - вызываем в request, потому что валидации запросы до entity должен держать в request. Но нашу аннотацию-валидацию можно использовать в любом классе
+public @interface PasswordAnnValid {
     String message() default "password must be at least 6 characters and contains one uppercase letter"; //default message
 
     Class<?>[] groups() default {};

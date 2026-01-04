@@ -74,9 +74,6 @@ public class User implements UserDetails {
 
     @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE},
             orphanRemoval = true)
-    //orphanRemoval = true - Hibernate автоматически удаляет зависимого Follower, если он отсоединён от User.
-//    CascadeType.REMOVE удаляет дочерние объекты только когда удаляется родитель.
-//    orphanRemoval = true удаляет дочерние объекты когда они становятся «осиротевшими», даже если родитель остаётся в базе.
     @JsonManagedReference
     Follower follower;
 
@@ -91,24 +88,10 @@ public class User implements UserDetails {
     public String getUsername() {
         return email;
     }
-
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
+    public String getPassword() {
+        return password;
     }
 }
+
+

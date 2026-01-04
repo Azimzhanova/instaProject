@@ -35,7 +35,6 @@ public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final LikeRepository likeRepository;
     private final JwtService jwtService;
 

@@ -25,32 +25,32 @@ import peaksoft.instaproject.repository.UserRepository;
 public class SecurityConfig {
     private final UserRepository userRepo;
     private final JwtFilter jwtFilter;
+
     @Bean
     public UserDetailsService userDetailsService() {
         return email -> userRepo.findUserByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException("User not found")
+                () -> new UsernameNotFoundException("User not found!")
         );
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth
+        http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**")
                         .permitAll()
                         .anyRequest()
-                        .authenticated()
-                )
+                        .authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+    public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 }

@@ -9,5 +9,6 @@ import org.springframework.http.HttpStatus;
 public record UserResponse(
         String userName,
         @Email(message = "Email должен содержать символ '@' и иметь корректный формат")
-        String email
+        String email,
+        String phoneNumber
 ) {}

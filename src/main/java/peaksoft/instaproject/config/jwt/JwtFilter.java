@@ -14,6 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import peaksoft.instaproject.entity.User;
+import peaksoft.instaproject.exception.JwtAuthenticationException;
 
 import java.io.IOException;
 
@@ -37,10 +38,18 @@ public class JwtFilter extends OncePerRequestFilter {
                             new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities())
                     );
                 }
-            } catch (RuntimeException exception) {
-                throw new RuntimeException(exception);
+            }catch (JwtAuthenticationException e){
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("""
+                        {
+                            "status" : "UNAUTHORIZED",
+                            "message" : "%s"
+                        }
+                        """.formatted(e.getMessage()));
+                return;
             }
         }
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request,response);
     }
 }
