@@ -28,7 +28,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public UserInfoResponse saveUserInfo(UserInfoRequest userInfoRequest) {
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
         if (currentUser.getUserInfo() != null) {
             throw new RuntimeException("Info about User already exists");
         }
@@ -51,7 +51,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public UserInfoResponse findUserInfoByUserId(Long userId) {
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
         if (!currentUser.getId().equals(userId)) {
             throw new RuntimeException("This user is not the current user");
         }
@@ -70,7 +70,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public SimpleResponse updateUserInfo(Long userId, UserInfoUpdate infoUpdateRequest) {
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
 
         if (!currentUser.getId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't update another user-info");
@@ -83,7 +83,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             currentUser.setUserInfo(userInfo);
         }
 
-        userInfo.setFullName(infoUpdateRequest.fullname());
+        userInfo.setFullName(infoUpdateRequest.fullName());
         userInfo.setBiography(infoUpdateRequest.biography());
         userInfo.setGender(infoUpdateRequest.gender());
 
@@ -99,7 +99,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     @Override
     @Transactional
     public SimpleResponse changeImage(Long userId, AvatarRequest avatar) {
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
 
         if (!currentUser.getId().equals(userId)) {
             throw new ResponseStatusException(
@@ -128,7 +128,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 
     @Override
     public SimpleResponse deleteImage(Long userId) {
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
 
         if (!currentUser.getId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can't delete another user-info");

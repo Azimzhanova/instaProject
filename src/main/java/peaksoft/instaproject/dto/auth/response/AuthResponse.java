@@ -1,4 +1,4 @@
-package peaksoft.instaproject.dto.auth;
+package peaksoft.instaproject.dto.auth.response;
 
 import lombok.Builder;
 import peaksoft.instaproject.enums.Role;

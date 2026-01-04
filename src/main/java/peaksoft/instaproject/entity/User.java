@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,63 +26,62 @@ import java.util.List;
 @ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
+
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_gen")
+    @SequenceGenerator(name = "user_gen", sequenceName = "user_seq", allocationSize = 1)
     Long id;
 
-    @Column(name = "user_name", unique = true)
+    @Column(unique = true, nullable = false)
     String userName;
-    @Column(unique = true, nullable = false)
+
     String password;
+
     @Column(unique = true, nullable = false)
+    @Email(message = "Email должен сожержать символ '@' и иметь корректный формат")
     String email;
-    @Column(name = "phone_number", nullable = false)
+
     String phoneNumber;
+
     @Enumerated(EnumType.STRING)
-    Role role;
+    Role role; //Admin or User
 
-    int followersCount;
+    int followersCount;  //мои подписЧИКИ
+    int followingCount;  //мои подписКИ
 
-    int followingCount;
-    @OneToMany(mappedBy = "user", cascade = {
-            CascadeType.REMOVE,
-            CascadeType.DETACH,
-            CascadeType.MERGE,
-            CascadeType.REFRESH})
-    List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = {
-            CascadeType.REMOVE,
-            CascadeType.DETACH,
-            CascadeType.MERGE,
-            CascadeType.REFRESH
-    })
+    //todo ●●●●●●●●●● POSTS ●●●●●●●●●●
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE})
+    @JsonManagedReference //сериализуется только родительская сторона (часто исп-ся @OneToOne/@OneToMany)
+            List<Post> posts = new ArrayList<>();
+
+    //todo ●●●●●●●●●● COMMENT ●●●●●●●●●●
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonManagedReference
     List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = {
-            CascadeType.PERSIST, CascadeType.DETACH,
-            CascadeType.MERGE, CascadeType.REFRESH,
-            CascadeType.REMOVE}, orphanRemoval = true)
+    //todo ●●●●●●●●●● LIKE ●●●●●●●●●●
+    @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE},
+            orphanRemoval = true)
     @JsonManagedReference
     List<Like> likes = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = {
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH,
-            CascadeType.REMOVE})
+    //todo ●●●●●●●●●● USER_INFO ●●●●●●●●●●
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE})
+    @JsonManagedReference
     UserInfo userInfo;
 
-    @OneToOne(mappedBy = "user", cascade = {
-            CascadeType.PERSIST,
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH,
-            CascadeType.REMOVE}, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH, CascadeType.REMOVE},
+            orphanRemoval = true)
+    //orphanRemoval = true - Hibernate автоматически удаляет зависимого Follower, если он отсоединён от User.
+//    CascadeType.REMOVE удаляет дочерние объекты только когда удаляется родитель.
+//    orphanRemoval = true удаляет дочерние объекты когда они становятся «осиротевшими», даже если родитель остаётся в базе.
     @JsonManagedReference
     Follower follower;
 
+
+    //todo ❁❁❁❁❁❁❁❁❁❁ SECURITY ❁❁❁❁❁❁❁❁❁❁
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
@@ -93,8 +93,22 @@ public class User implements UserDetails {
     }
 
     @Override
-    public String getPassword() {
-        return password;
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

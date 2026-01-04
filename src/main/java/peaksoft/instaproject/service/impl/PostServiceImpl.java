@@ -1,5 +1,6 @@
 package peaksoft.instaproject.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
@@ -37,7 +39,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse createPost(Long userId, PostRequest postRequest) {
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
         if (!currentUser.getId().equals(userId)) {
             throw new AccessIsDeniedException("You are not allowed to create post!");
         }
@@ -76,7 +78,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostResponse updatePost(Long postId, PostRequest postRequest) {
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
         Post post = postRepository.findById(postId).orElseThrow(()
                 -> new NotFoundException("post not found"));
         if (!post.getUser().getId().equals(currentUser.getId())) {
@@ -98,47 +100,40 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getUserFeed(Long userId) {
+    public List<PostResponse> instFeed(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("User not found"));
         List<Long> subscriptionsId = new ArrayList<>();
+        //проверяем есть ли followers
         if (user.getFollower() != null) {
             subscriptionsId.addAll(user.getFollower().getSubscriptions().stream().map(User::getId).toList());
         }
-        subscriptionsId.add(user.getId());
+        subscriptionsId.add(user.getId()); //жана озунун посту
         if (subscriptionsId.isEmpty()) {
             return Collections.emptyList();
         }
 
         List<Post> postList = postRepository.findAllByIdLikeDescending(subscriptionsId);
-        return postList.stream().map(p -> PostResponse
-                        .builder().id(p.getId())
-                        .title(p.getTitle())
-                        .description(p.getDescription())
-                        .username(p.getUser().getUsername())
-                        .imageUrl(p.getImages().stream().findFirst().map(Image::getImageUrl).orElse(null)).collabUsers(p.getCollabs().stream().map(User::getUsername).toList())
-                        .createdAt(p.getCreatedAt())
-                        .build())
-                .toList();
+        return postList.stream().map(p -> PostResponse.builder().id(p.getId()).title(p.getTitle()).description(p.getDescription()).username(p.getUser().getUsername())
+                .imageUrl(p.getImages().stream().findFirst().map(Image::getImageUrl).orElse(null)).collabUsers(p.getCollabs().stream().map(User::getUsername).toList())
+                .createdAt(p.getCreatedAt()).build()).toList();
     }
+
 
     @Override
     public SimpleResponse deletePost(Long userId, Long postId) {
      // Получаем текущего user'a
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
 
         // Ищем post
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("Post not found"));
 
-        // Проверка прав: владелец поста или admin
+        // Проверка прав: User или admin
         if (!post.getUser().getId().equals(currentUser.getId()) && currentUser.getRole() != Role.ADMIN) {
             throw new AccessIsDeniedException("You are not allowed to delete this post!");
         }
 
-        /// Удаляем пост из списка user'a
         post.getUser().getPosts().removeIf(p -> p.getId().equals(postId));
-
-        // Удаляем пост из базы
         postRepository.delete(post);
 
         // Возвращаем ответ
@@ -148,10 +143,6 @@ public class PostServiceImpl implements PostService {
                 .build();
     }
 
-    @Override
-    public List<PostResponse> instFeed(Long userId) {
-        return List.of();
-    }
 
 
 }

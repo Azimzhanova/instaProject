@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 @Builder
 public record CommentResponse(
         String comment,
-        LocalDateTime createdAt,
         String userName,
         String postTitle,
-        int likeCount
+        int likeCount,
+        LocalDateTime createdAt
 ) { }

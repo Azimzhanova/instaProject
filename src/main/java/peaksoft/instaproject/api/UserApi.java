@@ -22,18 +22,28 @@ public class UserApi {
 
     //todo get user by id
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public UserByIdResponse getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
 
     //todo get all users
     @GetMapping("/all-users")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
         return userService.getAllUsers();
     }
 
+    //todo get user's Profile
+    @GetMapping("/{id}/user-profile")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public UserProfileResponse getProfile(@PathVariable Long id) {
+        return userService.userProfile(id);
+    }
+
     //todo update user by id
     @PutMapping("/{id}/update")
+    @PreAuthorize("hasRole('ADMIN')")
     public UserUpdateResponse updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest userUpdateRequest) {
         return userService.updateUser(id, userUpdateRequest);
     }
@@ -45,9 +55,5 @@ public class UserApi {
         return userService.deleteUserById(id);
     }
 
-    //todo get user's Profile
-    @GetMapping("/{id}/user-profile")
-    public UserProfileResponse getProfile(@PathVariable Long id) {
-        return userService.userProfile(id);
-    }
+
 }

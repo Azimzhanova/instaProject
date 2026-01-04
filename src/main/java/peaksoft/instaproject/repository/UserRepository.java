@@ -15,8 +15,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserByEmail(String email);
 
-    @Query("select new peaksoft.instaproject.dto.userDTO.response.UserResponse(" +
-            "u.id, u.userName,u.email," +
+    @Query("select new peaksoft.instaproject.dto.userDTO.response.UserResponse(u.userName,u.email," +
             "u.phoneNumber) from User u")
     List<UserResponse> getAllUsers();
 
@@ -26,4 +25,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             " like lower(concat('%', :someName, '%')) or lower(ui.fullName) " +
             "like lower(concat('%', :someName, '%'))")
     List<User> searchUserByUsernameOrByFullName(String someName);
+
+    boolean existUserByUsername(String username);
 }

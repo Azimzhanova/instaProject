@@ -7,7 +7,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import peaksoft.instaproject.config.jwt.JwtService;
-import peaksoft.instaproject.dto.auth.AuthResponse;
+import peaksoft.instaproject.dto.auth.response.AuthResponse;
 import peaksoft.instaproject.dto.auth.request.SignInRequest;
 import peaksoft.instaproject.dto.auth.request.SignUpRequest;
 import peaksoft.instaproject.entity.User;

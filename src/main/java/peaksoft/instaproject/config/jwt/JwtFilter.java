@@ -1,12 +1,14 @@
 package peaksoft.instaproject.config.jwt;
 
-import com.auth0.jwt.exceptions.JWTVerificationException;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.PropertyResolver;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
+
 
     @Override
     protected void doFilterInternal(@NotNull HttpServletRequest request,
@@ -34,7 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
                             new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), user.getAuthorities())
                     );
                 }
-            } catch (JWTVerificationException exception) {
+            } catch (RuntimeException exception) {
                 throw new RuntimeException(exception);
             }
         }

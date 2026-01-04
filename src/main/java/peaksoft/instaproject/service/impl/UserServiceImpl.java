@@ -3,7 +3,6 @@ package peaksoft.instaproject.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import peaksoft.instaproject.config.jwt.JwtService;
 import peaksoft.instaproject.dto.SimpleResponse;
@@ -31,7 +30,6 @@ import java.util.NoSuchElementException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
     private final FollowerRepository followerRepository;
 
     @Override
@@ -47,13 +45,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<peaksoft.instaproject.dto.userDTO.response.UserResponse> getAllUsers() {
+    public List<UserResponse> getAllUsers() {
         return userRepository.getAllUsers();
     }
 
     @Override
     public UserUpdateResponse updateUser(Long id, UserUpdateRequest userUpdateRequest) {
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
         User oldUser = userRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("User with such + " + id + " not found"));
         if (!currentUser.getEmail().equals(oldUser.getEmail())) {
@@ -61,7 +59,7 @@ public class UserServiceImpl implements UserService {
         }
         oldUser.setUserName(userUpdateRequest.userName());
         oldUser.setEmail(userUpdateRequest.email());
-        oldUser.setPassword(passwordEncoder.encode(userUpdateRequest.password()));
+//        oldUser.setPassword(passwordEncoder.encode(userUpdateRequest.password()));
         oldUser.setPhoneNumber(userUpdateRequest.phoneNumber());
         userRepository.save(oldUser);
         if (oldUser.getFollower() == null) {
@@ -83,7 +81,6 @@ public class UserServiceImpl implements UserService {
         if (userRepository.existsById(id)) {
             userRepository.deleteById(id);
         } else throw new NoSuchElementException("User with id " + id + " not found");
-
         return SimpleResponse.builder()
                 .httpStatus(HttpStatus.OK)
                 .message(String.format("User with id %s is deleted", id))
@@ -95,6 +92,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new NoSuchElementException("User with such + " + id + " not found"));
         int countSubscriptions = user.getFollower() == null ? 0 : user.getFollower().getSubscriptions().size();
         int countSubscribers = user.getFollower() == null ? 0 : user.getFollower().getSubscriptions().size();
+
         List<PostResponse> postList = user.getPosts()
                 .stream().map(p -> PostResponse
                         .builder()
@@ -110,9 +108,11 @@ public class UserServiceImpl implements UserService {
                 .sorted(Comparator.comparing(PostResponse::createdAt)
                         .reversed())
                 .toList();
+
         String fullName = user.getUserInfo() != null && user.getUserInfo().getFullName() != null ? user.getUserInfo().getFullName() : "";
         String imageUrl = user.getUserInfo() != null && user.getUserInfo().getImage() != null ? user.getUserInfo().getImage() : null;
-        return UserProfileResponse.builder().username(user.getUsername()).fullname(fullName)
+
+        return UserProfileResponse.builder().username(user.getUsername()).fullName(fullName)
                 .image(imageUrl).subscribers(countSubscribers).subscriptions(countSubscriptions).posts(postList).build();
     }
 

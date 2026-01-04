@@ -9,6 +9,5 @@ import java.awt.*;
 public record UserUpdateRequest(
         String userName,
         String email,
-        String password,
         String phoneNumber
 ) { }

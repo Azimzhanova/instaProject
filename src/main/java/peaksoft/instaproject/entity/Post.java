@@ -11,8 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -21,41 +20,25 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_gen")
     @SequenceGenerator(name = "post_gen", sequenceName = "post_seq", allocationSize = 1)
-
     Long id;
+
     String title;
     String description;
     LocalDateTime createdAt;
 
-    @ManyToOne(cascade = {
-            CascadeType.MERGE,
-            CascadeType.DETACH,
-            CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     User user;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    List<Image> images = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post", cascade = {
-            CascadeType.REMOVE,
-            CascadeType.REFRESH,
-            CascadeType.DETACH,
-            CascadeType.MERGE
-    })
-    List<Like> likes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post", cascade = {
-            CascadeType.PERSIST,
-            CascadeType.REMOVE,
-            CascadeType.REFRESH,
-            CascadeType.DETACH,
-            CascadeType.MERGE
-    })
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    List<Like> likes = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    List<Image> images = new ArrayList<>();
+
     @ManyToMany
-//    @JoinTable(name = "post_collabs",
-//            joinColumns = @JoinColumn(name = "post_id"),
-//            inverseJoinColumns = @JoinColumn(name = "collab_id"))
-    List<User> collabs = new ArrayList<>();
+    List<User> collabs = new ArrayList<>(); //бир постка бир канча User'лерди отметка кылса б-т
 }

@@ -33,7 +33,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public SimpleResponse likeForPost(Long userId, Long postId) {
 
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
 
         if (!currentUser.getId().equals(userId)) {
             throw new BadCredentialsException("You are not allowed to like this post!");
@@ -68,7 +68,7 @@ public class LikeServiceImpl implements LikeService {
     @Override
     public SimpleResponse likeForComment(Long userId, Long commentId) {
 
-        User currentUser = jwtService.checkAuthentication();
+        User currentUser = jwtService.checkToken();
 
         if (!currentUser.getId().equals(userId)) {
             throw new BadCredentialsException("You are not allowed to like this comment!");

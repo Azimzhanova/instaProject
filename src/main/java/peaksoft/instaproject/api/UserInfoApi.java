@@ -27,6 +27,7 @@ public class UserInfoApi {
 
     //todo get user's info by id
     @GetMapping("/{userId}/get-info")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public UserInfoResponse getUserInfo(@PathVariable Long userId) {
         return userInfoService.findUserInfoByUserId(userId);
     }
@@ -40,6 +41,7 @@ public class UserInfoApi {
 
     //todo change user's image
     @PutMapping("/{userId}/change-av")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public SimpleResponse updateUserImage(@PathVariable Long userId, @RequestBody AvatarRequest image) {
         return userInfoService.changeImage(userId, image);
     }

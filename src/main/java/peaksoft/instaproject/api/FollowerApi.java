@@ -1,6 +1,7 @@
 package peaksoft.instaproject.api;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import peaksoft.instaproject.dto.followerDTO.response.FollowerUserResponse;
 import peaksoft.instaproject.dto.followerDTO.response.ProfileSubscribeResponse;
@@ -15,24 +16,28 @@ public class FollowerApi {
 
     //todo search by username or full name
     @GetMapping("/search-user")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<FollowerUserResponse> searchByUsernameOrFullName(@RequestParam String someName) {
         return followerService.search(someName);
     }
 
     //todo 'Подписаться' 'Отменить подписку
     @PostMapping("/subscribe")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ProfileSubscribeResponse subscribe(@RequestParam Long targetId) {
         return followerService.subscribe(targetId);
     }
 
     //todo get all Subscribers by user-id
     @GetMapping("/{userId}/find-subscribers")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<FollowerUserResponse> getSubscribers(@PathVariable Long userId) {
         return followerService.getAllSubscribedByUserId(userId);
     }
 
     //todo get all Subscriptions by user-id
     @GetMapping("/{userId}/get-subscriptions")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<FollowerUserResponse> getSubscriptions(@PathVariable Long userId) {
         return followerService.getAllSubscriptionsByUserId(userId);
     }

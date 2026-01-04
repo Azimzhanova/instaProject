@@ -20,18 +20,21 @@ public class PostApi {
 
     //todo create post
     @PostMapping("/{userId}/save-post")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public PostResponse createPost(@PathVariable Long userId, @RequestBody PostRequest postRequest) {
         return postService.createPost(userId, postRequest);
     }
 
     //todo update post
     @PutMapping("/{postId}/edit-post")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public PostResponse updatePost(@PathVariable Long postId, @RequestBody PostRequest postRequest) {
         return postService.updatePost(postId, postRequest);
     }
 
     //todo get descending feed
     @GetMapping("/{userId}/feeds")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<PostResponse> getPosts(@PathVariable Long userId) {
         return postService.instFeed(userId);
     }

@@ -19,6 +19,7 @@ public class CommentApi {
 
     //create commit
     @PostMapping("/{userId}/{postId}/add-comment")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public CommentResponse createComment(@PathVariable("userId") Long userId,
                                          @PathVariable("postId") Long postId,
                                          @RequestBody CommentRequest commentRequest){
@@ -26,6 +27,7 @@ public class CommentApi {
     }
 
     @GetMapping("{postId}/getComments")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public List<CommentResponse> getComments(@PathVariable Long postId){
         return commentService.findAllCommentByPostId(postId);
     }

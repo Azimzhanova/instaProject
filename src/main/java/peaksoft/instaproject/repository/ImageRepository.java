@@ -6,5 +6,4 @@ import peaksoft.instaproject.entity.Image;
 
 @Repository
 public interface ImageRepository extends JpaRepository<Image,Long> {
-
 }

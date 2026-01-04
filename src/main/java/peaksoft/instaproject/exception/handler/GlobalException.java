@@ -17,24 +17,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-
 @RestControllerAdvice
-class GlobalException {
-
-    @ExceptionHandler(AlreadyExistsException.class)
-    @ResponseStatus(HttpStatus.CONFLICT)
+public class GlobalException {
+    @ExceptionHandler(AlreadyExistsException.class) //для обработки исключения в методах контролера
+    @ResponseStatus(HttpStatus.CONFLICT) //409
+    //@ResponseStatus - определяет, какой статус должен вернуться клиенту при выбросе исключений
     public ExceptionResponse handlerAlreadyExistsException(AlreadyExistsException e) {
         return ExceptionResponse.builder().httpStatus(HttpStatus.CONFLICT).exceptionName(e.getClass().getSimpleName()).message(e.getMessage()).build();
     }
 
     @ExceptionHandler(BadRequestException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.BAD_REQUEST) //400
     public ExceptionResponse handlerBadRequestException(BadRequestException e) {
         return ExceptionResponse.builder().httpStatus(HttpStatus.BAD_REQUEST).exceptionName(e.getClass().getSimpleName()).message(e.getMessage()).build();
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED) //401
     public ExceptionResponse handlerBadCredentialsException(BadCredentialsException e) {
         return ExceptionResponse.builder().httpStatus(HttpStatus.UNAUTHORIZED).exceptionName(e.getClass().getSimpleName()).message(e.getMessage()).build();
     }
@@ -63,7 +62,7 @@ class GlobalException {
         return ExceptionResponse.builder().httpStatus(HttpStatus.FORBIDDEN).exceptionName(e.getClass().getSimpleName()).message(e.getMessage()).build();
     }
 
-
+    //for working our validation annotation:
     @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handlerMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
@@ -77,8 +76,7 @@ class GlobalException {
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ExceptionResponse handlerUsernameNotFoundException(UsernameNotFoundException e) {
-        return ExceptionResponse.builder().httpStatus(HttpStatus.NOT_FOUND).exceptionName(e.getClass().getSimpleName()).message(e.getMessage()).build();
-
+        return ExceptionResponse.builder().httpStatus((HttpStatus.NOT_FOUND)).exceptionName(e.getClass().getSimpleName()).message(e.getMessage()).build();
     }
 
     @ExceptionHandler(JwtAuthenticationException.class)

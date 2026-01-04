@@ -14,27 +14,22 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
 @FieldDefaults(level = AccessLevel.PRIVATE)
+
 public class Follower {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "follower_gen")
     @SequenceGenerator(name = "follower_gen", sequenceName = "follower_seq", allocationSize = 1)
     Long id;
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "user_id")
+    @OneToOne(cascade = {CascadeType.MERGE,CascadeType.DETACH,CascadeType.REFRESH})
+    @JsonBackReference //не сериализуется дочерняя сторона(не будет рекурсий)
     User user;
 
     @ManyToMany
-//    @JoinTable(name = "subscribers", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "subscriber_id"))
     List<User> subscribers = new ArrayList<>(); //подписчик
 
     @ManyToMany
-//    @JoinTable(name = "subscription",
-//            joinColumns = @JoinColumn(name = "user_id"),
-//            inverseJoinColumns = @JoinColumn(name = "subscription_id")
-//    )
     List<User> subscriptions = new ArrayList<>(); //подписка
 }
 

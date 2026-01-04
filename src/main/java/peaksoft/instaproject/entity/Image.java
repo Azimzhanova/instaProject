@@ -15,14 +15,10 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "image_gen")
     @SequenceGenerator(name = "image_gen", sequenceName = "image_seq", allocationSize = 1)
-
     Long id;
+
     String imageUrl;
 
-    @ManyToOne(cascade = {
-            CascadeType.DETACH,
-            CascadeType.MERGE,
-            CascadeType.REFRESH},
-            fetch = FetchType.EAGER)
+    @ManyToOne
     Post post;
 }

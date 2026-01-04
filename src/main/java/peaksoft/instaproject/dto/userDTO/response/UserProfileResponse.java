@@ -8,7 +8,7 @@ import java.util.List;
 @Builder
 public record UserProfileResponse (
     String username,
-    String fullname,
+    String fullName,
     String image,
     int subscribers,
     int subscriptions,

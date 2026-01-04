@@ -1,5 +1,6 @@
 package peaksoft.instaproject.config.jwt;
 
+
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -12,7 +13,6 @@ import peaksoft.instaproject.entity.User;
 import peaksoft.instaproject.repository.UserRepository;
 
 import java.time.ZonedDateTime;
-
 
 @Component
 @RequiredArgsConstructor
@@ -28,10 +28,11 @@ public class JwtService {
                 .withClaim("email", user.getEmail())
                 .withClaim("role", user.getRole().name())
                 .withIssuedAt(ZonedDateTime.now().toInstant())
-                .withExpiresAt(ZonedDateTime.now().plusHours(1).toInstant())
+                .withExpiresAt(ZonedDateTime.now().plusDays(7).toInstant())
                 .sign(algorithm);
     }
-    // proverka tokena
+
+    //proverka tokena
     public User verifyToken(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secretKey);
         JWTVerifier verifier = JWT.require(algorithm).build();
@@ -41,7 +42,7 @@ public class JwtService {
                 new RuntimeException(String.format("User with email %s not found", email)));
     }
 
-    public User checkAuthentication() {
+    public User checkToken() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return userRepo.findUserByEmail(email).orElseThrow(() ->
