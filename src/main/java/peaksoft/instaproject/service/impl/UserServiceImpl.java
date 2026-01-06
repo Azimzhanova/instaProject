@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
     public UserUpdateResponse updateUser(Long id, UserUpdateRequest userUpdateRequest) {
         User currentUser = jwtService.checkToken();
         User oldUser = userRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("User with id " + id + " not found"));
+                .orElseThrow(() -> new NoSuchElementException("User with such " + id + " not found"));
 
         if (!currentUser.getEmail().equals(oldUser.getEmail())) {
             throw new AccessIsDeniedException("You can't update this user");

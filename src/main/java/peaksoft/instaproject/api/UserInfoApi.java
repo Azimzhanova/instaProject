@@ -20,7 +20,7 @@ public class UserInfoApi {
 
     //todo save info user
     @PostMapping("/add-info")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public UserInfoResponse addUserInfo(@RequestBody UserInfoRequest userInfoRequest) {
         return userInfoService.saveUserInfo(userInfoRequest);
     }
@@ -34,7 +34,7 @@ public class UserInfoApi {
 
     //todo update info
     @PutMapping("/{userId}/edit-info")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public SimpleResponse updateInfo(@PathVariable Long userId, @RequestBody UserInfoUpdate infoUpdateRequest) {
         return userInfoService.updateUserInfo(userId, infoUpdateRequest);
     }
@@ -48,7 +48,7 @@ public class UserInfoApi {
 
     //todo delete user's avatar
     @DeleteMapping("/{userId}/delete-image")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public SimpleResponse deleteUserInfo(@PathVariable Long userId) {
         return userInfoService.deleteImage(userId);
     }

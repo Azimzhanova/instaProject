@@ -67,14 +67,14 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-    //init method
+    //todo init method
     @PostConstruct
     private void saveAdmin() {
         User user = new User();
         user.setUserName("admin");
         user.setPassword(passwordEncoder.encode("admin1234"));
         user.setEmail("admin@gmail.com");
-        user.setPhoneNumber("+996500343536");
+        user.setPhoneNumber("+99656546896");
         user.setRole(Role.ADMIN);
         if (!userRepository.existsUserByEmail(user.getEmail())) {
             userRepository.save(user);

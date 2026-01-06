@@ -43,7 +43,7 @@ public class UserApi {
 
     //todo update user by id
     @PutMapping("/{id}/update")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public UserUpdateResponse updateUser(@PathVariable Long id, @RequestBody UserUpdateRequest userUpdateRequest) {
         return userService.updateUser(id, userUpdateRequest);
     }

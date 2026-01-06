@@ -14,22 +14,11 @@ public class PhoneNumberValidation implements ConstraintValidator<PhoneNumberAnn
     //private Pattern pattern;
     @Override
     public void initialize(PhoneNumberAnnValid constraintAnnotation) {
-        //ConstraintValidator.super.initialize(constraintAnnotation);
-        //this.pattern = Pattern.compile(PHONE_REGEX); //option 2
     }
 
     @Override
     public boolean isValid(String number, ConstraintValidatorContext constraintValidatorContext) {
         if(number==null){ return true;}
-        //return number.startsWith("+996");
-        //option 2
-        /*Matcher matcher = pattern.matcher(number);
-        return matcher.matches();*/
-        //option 3
-//        boolean st = number.startsWith("+996");
-//        boolean l = number.length() == 9;
-//        boolean result = number.substring(4).matches("\\d+");
-//        return st && l && result;
         return number.matches("^\\+996\\d{9}$");
     }
 }

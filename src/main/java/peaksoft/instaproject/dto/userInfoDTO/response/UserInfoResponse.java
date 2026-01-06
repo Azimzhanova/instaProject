@@ -5,7 +5,6 @@ import peaksoft.instaproject.enums.Gender;
 
 @Builder
 public record UserInfoResponse(
-
         String fullName,
         String biography,
         Gender gender,
